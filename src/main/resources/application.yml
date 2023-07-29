@@ -1,0 +1,10 @@
+telegram:
+  botName: NAME
+  token: TOKEN
+
+spring:
+
+  liquibase:
+    change-log: classpath:/liquibase/changelog.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=example
