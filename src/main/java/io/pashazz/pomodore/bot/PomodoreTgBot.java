@@ -50,7 +50,7 @@ public class PomodoreTgBot extends TelegramLongPollingBot {
   @Override
   public void onUpdateReceived(Update update) {
     Message message;
-
+    log.debug("[onUpdateReceived] thread: " + Thread.currentThread().getName());
     if (update.hasMessage()) {
       message =  update.getMessage();
     } else if (update.hasCallbackQuery()) {
@@ -103,7 +103,7 @@ public class PomodoreTgBot extends TelegramLongPollingBot {
 
     MessageParameters parameters = new MessageParameters(task.getChatId(),
       taskTextMessageService.getChangeStatusTextMessage(task));
-    log.info("[publishStatusTextMessage] task: " + task.getChatId() + ";status changed to: " + task.getStatus());
+    log.debug("[publishStatusTextMessage] task: " + task.getChatId() + " -  phase changed to: " + task.getPhase());
     sendMessage(parameters);
   }
 
@@ -112,14 +112,13 @@ public class PomodoreTgBot extends TelegramLongPollingBot {
     SendMessage sendMessage = new SendMessage();
     sendMessage.setText(parameters.message());
     sendMessage.setChatId(parameters.chatId());
-    try {
-      sendApiMethod(sendMessage);
-    } catch (TelegramApiException e) {
-      // TODO Try again of some sort
-      log.error(String.format("Unable to sendMessage to chatId: %d: %s",
-        parameters.chatId(), e));
-    }
+    sendApiMethodAsync(sendMessage)
+      .exceptionallyAsync(ex -> {
+        log.warn("Exception while executing sendMessage: " + ex);
+        return null;
+      });
   }
+
 
 
   @Override

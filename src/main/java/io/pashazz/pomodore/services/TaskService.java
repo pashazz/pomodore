@@ -8,13 +8,17 @@ import io.pashazz.pomodore.repositories.TaskRepository;
 import io.pashazz.pomodore.services.state.TaskState;
 import io.pashazz.pomodore.services.state.TaskStateManager;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
+@Slf4j
 public class TaskService {
 
 
@@ -63,7 +67,10 @@ public class TaskService {
   @Transactional
   public Task changeStateForTask(Task task) {
     TaskState taskState = taskStateManager.taskStateForTask(task);
-    taskState.nextState(task);
+    TaskState next = taskState.nextState(task);
+    log.debug(String.format(
+      "[changeStateForTask] next state: %s; next execution time: %s", task.getPhase(),
+      LocalDateTime.ofEpochSecond(task.getTime(), 0, ZoneOffset.UTC)));
     return repo.save(task);
   }
 

@@ -33,7 +33,7 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok")
 
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring- boot-starter-test")
 
 
   // https://mvnrepository.com/artifact/org.telegram/telegrambots
